@@ -1,3 +1,18 @@
-apply plugin: 'idea'
-apply plugin: 'java'
-//не шарю за gradle(. Настрой пжжж...
+plugins {
+    id 'java'
+}
+
+group 'DVa-ALENYa'
+version '1.0-SNAPSHOT'
+
+compileJava.options.encoding = 'UTF-8'
+compileTestJava.options.encoding = 'UTF-8'
+
+dependencies {
+    //lomgok
+    compileOnly 'org.projectlombok:lombok:1.18.16'
+    annotationProcessor 'org.projectlombok:lombok:1.18.16'
+
+    testCompileOnly 'org.projectlombok:lombok:1.18.16'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.16'
+}
