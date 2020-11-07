@@ -1,4 +1,4 @@
-package java.model.mainAlg;
+package model.mainAlg;
 
 public class MainAlg {
     public static void main(String[] args) {

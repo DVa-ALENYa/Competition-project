@@ -1,0 +1,3 @@
+apply plugin: 'idea'
+apply plugin: 'java'
+//не шарю за gradle(. Настрой пжжж...
