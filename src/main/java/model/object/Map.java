@@ -1,7 +1,10 @@
 package model.object;
 
+import lombok.Getter;
+
 import java.util.ArrayList;
 
+@Getter
 public class Map {
 
     private int X, Y; // map size
