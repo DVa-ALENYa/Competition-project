@@ -1,27 +1,17 @@
 package model.object;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.Objects;
 
+@Getter
+@Setter
 public class Pair<T, T1> {
     private T first;
     private T1 second;
     public Pair(T first, T1 second){
         this.first = first;
-        this.second = second;
-    }
-    public T getFirst(){
-        return this.first;
-    }
-
-    public T1 getSecond(){
-        return this.second;
-    }
-
-    public void setFirst(T first){
-        this.first = first;
-    }
-
-    public void setSecond(T1 second){
         this.second = second;
     }
 
