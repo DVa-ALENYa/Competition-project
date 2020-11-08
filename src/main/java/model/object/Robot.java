@@ -1,5 +1,6 @@
 package model.object;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -9,11 +10,9 @@ import java.util.Objects;
 
 public class Robot {
 
-    @Getter
-    @Setter
+    @Getter @Setter
     private int X;
-    @Getter
-    @Setter
+    @Getter @Setter
     private int Y;
     private List<Manipulator> manipulators;
 
@@ -27,11 +26,11 @@ public class Robot {
     }
 
     public class Manipulator{
-        @Getter
-        @Setter
+
+        @Getter @Setter
         private int X;
-        @Getter
-        @Setter
+
+        @Getter @Setter
         private int Y;
 
         public Manipulator(int x, int y) {
