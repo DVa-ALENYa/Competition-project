@@ -62,6 +62,7 @@ public class Parser {
         }
         return out;
     }
+
     public List<Pair<Character, Pair<Integer, Integer>>> parseBoosters() {
         String[] split = splitArr[3].split(";");
         List<Pair<Character, Pair<Integer, Integer>>> out = new ArrayList<>();
