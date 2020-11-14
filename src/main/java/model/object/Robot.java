@@ -1,8 +1,8 @@
 package model.object;
 
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import model.parser.Parser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,15 +14,17 @@ public class Robot {
     private int X;
     @Getter @Setter
     private int Y;
-    private List<Manipulator> manipulators;
+    
+    private final List<Manipulator> manipulators;
 
-    public Robot(int x, int y) {
-        X = x;
-        Y = y;
+    public Robot(Parser parser) {
+        Pair<Integer, Integer> pair = parser.parseStartPositionRobot();
+        X = pair.getFirst();
+        Y = pair.getSecond();
         manipulators = new ArrayList<>(3);
-        manipulators.add(new Manipulator(x + 1, y));
-        manipulators.add(new Manipulator(x + 1, y + 1));
-        manipulators.add(new Manipulator(x + 1, y - 1));
+        manipulators.add(new Manipulator(X + 1, Y));
+        manipulators.add(new Manipulator(X + 1, Y + 1));
+        manipulators.add(new Manipulator(X + 1, Y - 1));
     }
 
     public class Manipulator{
