@@ -12,10 +12,8 @@ public class Map {
     private int X, Y; // map size
     private ArrayList<ArrayList<Integer>> map;
     private int xOffset, yOffset;
-    private String fileName = "";
 
-    public Map() {
-        Parser parser = new Parser(fileName);
+    public Map(Parser parser) {
         createMap(parser.parseSizeMap());
         createObstacles(parser.parseWallPosition());
         createBoosters(parser.parseBoosters());
@@ -69,7 +67,7 @@ public class Map {
     }
 
     private void checkBounding(List<Pair<Integer, Integer>> coordinates) {
-        if (coordinates.size() != 4 ||
+        if (
                 !coordinates.get(0).getFirst().equals(coordinates.get(3).getFirst()) ||
                 !coordinates.get(0).getSecond().equals(coordinates.get(1).getSecond()) ||
                 !coordinates.get(1).getFirst().equals(coordinates.get(2).getFirst()) ||
