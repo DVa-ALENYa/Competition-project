@@ -44,7 +44,6 @@ public class AStar {
                 }
             }
         }
-
         return pathToTarget;
     }
 
@@ -56,7 +55,7 @@ public class AStar {
             path.add(new Pair<>(currentNode.position.getFirst(), currentNode.position.getSecond()));
             currentNode = currentNode.parent;
         }
-
+        Collections.reverse(path);
         return path;
     }
 

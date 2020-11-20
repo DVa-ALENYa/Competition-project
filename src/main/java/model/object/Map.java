@@ -12,11 +12,11 @@ public class Map {
     private ArrayList<ArrayList<Integer>> map;
     private int xOffset, yOffset;
 
-   // public Map(Parser parser) {
-   //     createMap(parser.parseSizeMap());
-   //     createObstacles(parser.parseWallPosition());
-   //     createBoosters(parser.parseBoosters());
-   // }
+    public Map(Parser parser) {
+        createMap(parser.parseSizeMap());
+        createObstacles(parser.parseWallPosition());
+//        createBoosters(parser.parseBoosters());
+    }
 
     public Map() {
 
@@ -47,7 +47,7 @@ public class Map {
             int y = obstacle.get(0).getSecond() - yOffset;
             int Y = obstacle.get(2).getSecond() - yOffset;
             int X = obstacle.get(2).getFirst() - xOffset;
-            for (int j = y; j < Y; j++) {
+            for (int j = --Y; j >= y; j--) {
                 for (int k = x; k < X; k++) {
                     map.get(j).set(k, -1);  //мозги плывут чекни плз
                 }
@@ -56,9 +56,10 @@ public class Map {
     }
 
     public int value(int x, int y){  // delete нинада больше
-        if(x > X || y > Y) return -2;
+        if (x >= X || y >= Y || x < 0 || y < 0)
+            return -2;
         else
-        return map.get(y).get(x);
+            return map.get(y).get(x);
     }
 
     public void createBoosters(List<Pair<Character, Pair<Integer, Integer>>> coordinates) {
@@ -87,4 +88,11 @@ public class Map {
         ) throw new IllegalArgumentException();
     }
 
+    @Override
+    public String toString() {
+        for (List<Integer> i : map) {
+            System.out.println(i);
+        }
+        return "";
+    }
 }

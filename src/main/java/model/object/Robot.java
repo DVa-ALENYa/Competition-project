@@ -16,8 +16,25 @@ public class Robot {
     @Getter
     @Setter
     private int Y;
+    @Getter
+    private StringBuilder answer = new StringBuilder();
 
     private final List<Manipulator> manipulators;
+
+    private Position position = Position.D;
+
+    private enum Position {
+        W(0),
+        D(1),
+        S(2),
+        A(3);
+
+        private int number;
+
+        Position(int i) {
+            this.number = i;
+        }
+    }
 
     public Robot(Parser parser) {
         Pair<Integer, Integer> pair = parser.parseStartPositionRobot();
@@ -29,50 +46,116 @@ public class Robot {
         manipulators.add(2, new Manipulator(X + 1, Y + 1));
     }
 
-    public char moveW() {
-        Y++;
+    public void moveW() {
+        this.Y--;
         for (Manipulator manipulator : manipulators) {
             manipulator.moveW();
         }
-        return 'W';
+        answer.append('S');
     }
 
-    public char moveS() {
-        Y--;
+    public void moveS() {
+        this.Y++;
         for (Manipulator manipulator : manipulators) {
             manipulator.moveS();
         }
-        return 'S';
+        answer.append('W');
     }
 
-    public char moveA() {
-        X--;
+    public void moveA() {
+        this.X--;
         for (Manipulator manipulator : manipulators) {
             manipulator.moveA();
         }
-        return 'A';
+        answer.append('A');
     }
 
-    public char moveD() {
-        X++;
+    public void moveD() {
+        this.X++;
         for (Manipulator manipulator : manipulators) {
             manipulator.moveD();
         }
-        return 'D';
+        answer.append('D');
     }
 
-    public char turnQ() {
+    public void turnQ() {
         for (Manipulator manipulator : manipulators) {
             manipulator.turnQ(this.X, this.Y);
         }
-        return 'Q';
+        position = Position.values()[(position.number + 3) % 4];
+        answer.append('Q');
     }
 
-    public char turnE() {
+    public void turnE() {
         for (Manipulator manipulator : manipulators) {
             manipulator.turnE(this.X, this.Y);
         }
-        return 'E';
+        position = Position.values()[(position.number + 1) % 4];
+        answer.append('E');
+    }
+
+    public void moveTo(Pair<Integer, Integer> point) {
+        int helpX = point.getFirst() - X;
+        int helpY = point.getSecond() - Y;
+        if (helpX == 0) {
+            if (helpY == 1) {
+                switch (position) {
+                    case A:
+                        turnQ();
+                        break;
+                    case D:
+                        turnE();
+                        break;
+                    case W:
+                        turnE();
+                        turnE();
+                        break;
+                }
+                moveS();
+            } else {
+                switch (position) {
+                    case A:
+                        turnE();
+                        break;
+                    case D:
+                        turnQ();
+                        break;
+                    case S:
+                        turnE();
+                        turnE();
+                        break;
+                }
+                moveW();
+            }
+        } else if (helpX == 1) {
+            switch (position) {
+                case A:
+                    turnE();
+                    turnE();
+                    break;
+                case S:
+                    turnQ();
+                    break;
+                case W:
+                    turnE();
+                    break;
+            }
+            moveD();
+        } else {
+            switch (position) {
+                case D:
+                    turnE();
+                    turnE();
+                    break;
+                case S:
+                    turnE();
+                    break;
+                case W:
+                    turnQ();
+                    break;
+            }
+            moveA();
+        }
     }
 
     private static class Manipulator {
