@@ -8,7 +8,9 @@ import java.util.Objects;
 @Setter
 @Getter
 public class Pair<T, T1> {
+    @Getter
     private T first;
+    @Getter
     private T1 second;
     public Pair(T first, T1 second){
         this.first = first;

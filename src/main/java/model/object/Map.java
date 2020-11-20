@@ -8,15 +8,18 @@ import java.util.List;
 
 @Getter
 public class Map {
-
     private int X, Y; // map size
     private ArrayList<ArrayList<Integer>> map;
     private int xOffset, yOffset;
 
-    public Map(Parser parser) {
-        createMap(parser.parseSizeMap());
-        createObstacles(parser.parseWallPosition());
-        createBoosters(parser.parseBoosters());
+   // public Map(Parser parser) {
+   //     createMap(parser.parseSizeMap());
+   //     createObstacles(parser.parseWallPosition());
+   //     createBoosters(parser.parseBoosters());
+   // }
+
+    public Map() {
+
     }
 
     public void createMap(List<Pair<Integer, Integer>> coordinates) {
@@ -29,6 +32,9 @@ public class Map {
         X = coordinates.get(2).getFirst() - coordinates.get(0).getFirst();
         for (int i = 0; i < Y; i++) {
             ArrayList<Integer> row = new ArrayList<>(X);
+            for (int j = 0; j < X; j++) {
+                row.add(0); //подругому тут получается лист, но с null, а не 0
+            }
             map.add(row);
         }
     }
@@ -47,6 +53,12 @@ public class Map {
                 }
             }
         }
+    }
+
+    public int value(int x, int y){  // delete нинада больше
+        if(x > X || y > Y) return -2;
+        else
+        return map.get(y).get(x);
     }
 
     public void createBoosters(List<Pair<Character, Pair<Integer, Integer>>> coordinates) {
