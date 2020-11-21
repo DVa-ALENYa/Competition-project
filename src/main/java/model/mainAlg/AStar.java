@@ -7,7 +7,7 @@ import java.util.*;
 
 public class AStar {
     private final Map map;
-    public List<Node> closed;
+    public Set<Node> closed;
 
 
     public AStar(Map map) {
@@ -16,7 +16,7 @@ public class AStar {
 
     public List<Pair<Integer, Integer>> GetPath(int x, int y, int X, int Y) {
         List<Pair<Integer, Integer>> pathToTarget = new ArrayList<>();
-        closed = new ArrayList<>();
+        closed = new HashSet<>();
         Queue<Node> open = new PriorityQueue<>(Comparator.comparingInt((Node node) -> node.F));
 
         Pair<Integer, Integer> startPosition = new Pair<>(x, y);
@@ -34,10 +34,8 @@ public class AStar {
                 return calculatePathFromNode(nodeToCheck);
             }
             if (map.value(nodeToCheck.position.getFirst(), nodeToCheck.position.getSecond()) < 0) {
-                open.remove(nodeToCheck);
                 closed.add(nodeToCheck);
             } else {
-                open.remove(nodeToCheck);
                 if (!closed.contains(nodeToCheck)) {
                     closed.add(nodeToCheck);
                     open.addAll(getNeighbours(nodeToCheck));
@@ -102,9 +100,21 @@ public class AStar {
         }
 
         @Override
-        public boolean equals(Object obj) {
-            Node node = (Node) obj;
-            return this.position.equals(node.position);
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            Node node = (Node) o;
+            return F == node.F &&
+                    G == node.G &&
+                    H == node.H &&
+                    Objects.equals(position, node.position) &&
+                    Objects.equals(finish, node.finish) &&
+                    Objects.equals(parent, node.parent);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(position, finish, parent, F, G, H);
         }
     }
 }

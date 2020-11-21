@@ -17,7 +17,7 @@ public class Robot {
     @Setter
     private int Y;
     @Getter
-    private StringBuilder answer = new StringBuilder();
+    private final StringBuilder answer = new StringBuilder();
 
     private final List<Manipulator> manipulators;
 
@@ -25,11 +25,11 @@ public class Robot {
 
     private enum Position {
         W(0),
-        D(1),
+        A(1),
         S(2),
-        A(3);
+        D(3);
 
-        private int number;
+        private final int number;
 
         Position(int i) {
             this.number = i;
@@ -48,6 +48,18 @@ public class Robot {
 
     public void moveW() {
         this.Y--;
+        switch (position) {
+            case A:
+                turnQ();
+                break;
+            case D:
+                turnE();
+                break;
+            case S:
+                turnE();
+                turnE();
+                break;
+        }
         for (Manipulator manipulator : manipulators) {
             manipulator.moveW();
         }
@@ -56,6 +68,18 @@ public class Robot {
 
     public void moveS() {
         this.Y++;
+        switch (position) {
+            case A:
+                turnE();
+                break;
+            case D:
+                turnQ();
+                break;
+            case W:
+                turnE();
+                turnE();
+                break;
+        }
         for (Manipulator manipulator : manipulators) {
             manipulator.moveS();
         }
@@ -64,6 +88,18 @@ public class Robot {
 
     public void moveA() {
         this.X--;
+        switch (position) {
+            case D:
+                turnE();
+                turnE();
+                break;
+            case S:
+                turnQ();
+                break;
+            case W:
+                turnE();
+                break;
+        }
         for (Manipulator manipulator : manipulators) {
             manipulator.moveA();
         }
@@ -72,6 +108,18 @@ public class Robot {
 
     public void moveD() {
         this.X++;
+        switch (position) {
+            case A:
+                turnE();
+                turnE();
+                break;
+            case S:
+                turnE();
+                break;
+            case W:
+                turnQ();
+                break;
+        }
         for (Manipulator manipulator : manipulators) {
             manipulator.moveD();
         }
@@ -99,61 +147,13 @@ public class Robot {
         int helpY = point.getSecond() - Y;
         if (helpX == 0) {
             if (helpY == 1) {
-                switch (position) {
-                    case A:
-                        turnQ();
-                        break;
-                    case D:
-                        turnE();
-                        break;
-                    case W:
-                        turnE();
-                        turnE();
-                        break;
-                }
                 moveS();
             } else {
-                switch (position) {
-                    case A:
-                        turnE();
-                        break;
-                    case D:
-                        turnQ();
-                        break;
-                    case S:
-                        turnE();
-                        turnE();
-                        break;
-                }
                 moveW();
             }
         } else if (helpX == 1) {
-            switch (position) {
-                case A:
-                    turnE();
-                    turnE();
-                    break;
-                case S:
-                    turnQ();
-                    break;
-                case W:
-                    turnE();
-                    break;
-            }
             moveD();
         } else {
-            switch (position) {
-                case D:
-                    turnE();
-                    turnE();
-                    break;
-                case S:
-                    turnE();
-                    break;
-                case W:
-                    turnQ();
-                    break;
-            }
             moveA();
         }
     }

@@ -28,12 +28,20 @@ public class Parser {
 
     public List<Pair<Integer, Integer>> parseSizeMap() {
         Matcher matcher = pattern.matcher(splitArr[0]);
-        List<Pair<Integer, Integer>> out = new ArrayList<>(4);
+        List<Pair<Integer, Integer>> out = new ArrayList<>();
+        Pair<Integer, Integer> added;
+        int maxX = 0, maxY = 0;
         while (matcher.find()) {
             String[] split = matcher.group(1).split(",");
-            out.add(new Pair<>(Integer.valueOf(split[0]), Integer.valueOf(split[1])));
+            added = new Pair<>(Integer.valueOf(split[0]), Integer.valueOf(split[1]));
+            if (maxX < added.getFirst()) {
+                maxX = added.getFirst();
+            } else if (maxY < added.getSecond()) {
+                maxY = added.getSecond();
+            }
+            out.add(added);
         }
-        if (out.size() != 4) throw new IllegalArgumentException("Wrong sizes of Map");
+        out.add(0, new Pair<>(maxX, maxY));
         return out;
     }
 
