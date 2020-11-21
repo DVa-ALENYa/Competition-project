@@ -5,7 +5,6 @@ import model.object.Pair;
 import model.object.Robot;
 import model.parser.Parser;
 
-import java.util.Collections;
 import java.util.List;
 
 public class MainAlg {
@@ -33,14 +32,13 @@ public class MainAlg {
                 robot.moveTo(pair);
             }
         }
-        System.out.println(map);
         int h = map.getY() + 1;
         int w = map.getX() + 1;
-        int maxW = map.getX()-1;
-        int maxH = map.getY()-1;
+        int maxW = map.getX() - 1;
+        int maxH = map.getY() - 1;
         int minW = 0;
         int minH = 1;
-        int countOfFrames = Math.max(maxH, maxW) / 2;
+        int countOfFrames = Math.max(maxH, maxW) / 4;
         int move = 0;
         boolean findEmpty = false;
         int x = 0, y = 0;
@@ -49,8 +47,25 @@ public class MainAlg {
             h--;
             w--;
             w--;
-            System.out.println(2 * (h + w));
-            for (int j = 0; j < 2 * (h + w)-1; j++) {
+            if (x != 0 || y != 0) {
+                System.out.println(1);
+                List<Pair<Integer, Integer>> path =
+                        new AStar(map).GetPath(robot.getX(), robot.getY(), robot.getX()+2, robot.getY()+1);
+                for (Pair<Integer, Integer> pair : path) {
+                    robot.moveTo(pair);
+                }
+                x = robot.getX();
+                y = robot.getY();
+                h--;
+                h--;
+                w--;
+                w--;
+                minH++;
+                minW++;
+                maxH--;
+                maxW--;
+            }
+            for (int j = 0; j < 2 * (h + w) - 1; j++) {
                 if (move == 0) {
                     if (map.value(++x, y) != -1) {
                         if (findEmpty) {
@@ -66,7 +81,6 @@ public class MainAlg {
                         findEmpty = true;
                         x++;
                     }
-
                     if (x == maxW) {
                         maxW--;
                         move = 1;
@@ -112,7 +126,7 @@ public class MainAlg {
                         move = 3;
                     }
                 }
-                else if (move == 3) {
+                else {
                     if (map.value(x, --y) != -1) {
                         if (findEmpty) {
                             findEmpty = false;
