@@ -54,17 +54,16 @@ public class Parser {
             throw new IllegalArgumentException("Wrong of position Robot");
     }
 
-    public List<Pair<Integer, Integer>> parseWallPosition() {
-        List<Pair<Integer, Integer>> out = new ArrayList<>();
+    public List<List<Pair<Integer, Integer>>> parseWallPosition() { // парсер поменял на лист листов без проверки на 4
+        List<List<Pair<Integer, Integer>>> out = new ArrayList<>();
         for (String splitStr: splitArr[2].split(";")) {
+            List<Pair<Integer, Integer>> obstacle = new ArrayList<>();
             Matcher matcher = pattern.matcher(splitStr);
-            int count = 0;
             while (matcher.find()) {
                 String[] split = matcher.group(1).split(",");
-                out.add(new Pair<>(Integer.valueOf(split[0]), Integer.valueOf(split[1])));
-                count++;
+                obstacle.add(new Pair<>(Integer.valueOf(split[0]), Integer.valueOf(split[1])));
             }
-            if (count != 4) throw new IllegalArgumentException("Wrong position of Wall");
+            out.add(obstacle);
         }
         return out;
     }
