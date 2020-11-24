@@ -1,11 +1,9 @@
 package model.mainAlg;
 
 import model.object.Map;
-import model.object.Pair;
 import model.object.Robot;
 import model.parser.Parser;
 
-import java.util.List;
 
 public class MainAlg {
 
@@ -26,129 +24,9 @@ public class MainAlg {
 
     public static void main(String[] args) {
         init();
-        if (X != 0 || Y != 0) {
-            List<Pair<Integer, Integer>> path = new AStar(map).GetPath(X, Y, 0, 0);
-            for (Pair<Integer, Integer> pair : path) {
-                robot.moveTo(pair);
-            }
-        }
-        int h = map.getY() + 1;
-        int w = map.getX() + 1;
-        int maxW = map.getX() - 1;
-        int maxH = map.getY() - 1;
-        int minW = 0;
-        int minH = 1;
-        int countOfFrames = Math.max(maxH, maxW) / 4;
-        int move = 0;
-        boolean findEmpty = false;
-        int x = 0, y = 0;
-        for (int i = 0; i < countOfFrames; i++) {
-            h--;
-            h--;
-            w--;
-            w--;
-            if (x != 0 || y != 0) {
-                System.out.println(1);
-                List<Pair<Integer, Integer>> path =
-                        new AStar(map).GetPath(robot.getX(), robot.getY(), robot.getX()+2, robot.getY()+1);
-                for (Pair<Integer, Integer> pair : path) {
-                    robot.moveTo(pair);
-                }
-                x = robot.getX();
-                y = robot.getY();
-                h--;
-                h--;
-                w--;
-                w--;
-                minH++;
-                minW++;
-                maxH--;
-                maxW--;
-            }
-            for (int j = 0; j < 2 * (h + w) - 1; j++) {
-                if (move == 0) {
-                    if (map.value(++x, y) != -1) {
-                        if (findEmpty) {
-                            findEmpty = false;
-                            List<Pair<Integer, Integer>> path = new AStar(map).GetPath(robot.getX(), robot.getY(), x, y);
-                            for (Pair<Integer, Integer> pair : path) {
-                                robot.moveTo(pair);
-                            }
-                        } else {
-                            robot.moveD();
-                        }
-                    } else {
-                        findEmpty = true;
-                        x++;
-                    }
-                    if (x == maxW) {
-                        maxW--;
-                        move = 1;
-                    }
-                }
-                else if (move == 1) {
-                    if (map.value(x, ++y) != -1) {
-                        if (findEmpty) {
-                            findEmpty = false;
-                            List<Pair<Integer, Integer>> path = new AStar(map).GetPath(robot.getX(), robot.getY(), x, y);
-                            for (Pair<Integer, Integer> pair : path) {
-                                robot.moveTo(pair);
-                            }
-                        } else {
-                            robot.moveS();
-                        }
-                    } else {
-                        findEmpty = true;
-                        y++;
-                    }
-                    if (y == maxH) {
-                        maxH--;
-                        move = 2;
-                    }
-                }
-                else if (move == 2) {
-                    if (map.value(--x, y) != -1) {
-                        if (findEmpty) {
-                            findEmpty = false;
-                            List<Pair<Integer, Integer>> path = new AStar(map).GetPath(robot.getX(), robot.getY(), x, y);
-                            for (Pair<Integer, Integer> pair : path) {
-                                robot.moveTo(pair);
-                            }
-                        } else {
-                            robot.moveA();
-                        }
-                    } else {
-                        findEmpty = true;
-                        x--;
-                    }
-                    if (x == minW) {
-                        minW++;
-                        move = 3;
-                    }
-                }
-                else {
-                    if (map.value(x, --y) != -1) {
-                        if (findEmpty) {
-                            findEmpty = false;
-                            List<Pair<Integer, Integer>> path = new AStar(map).GetPath(robot.getX(), robot.getY(), x, y);
-                            for (Pair<Integer, Integer> pair : path) {
-                                robot.moveTo(pair);
-                            }
-                        } else {
-                            robot.moveW();
-                        }
-                    } else {
-                        findEmpty = true;
-                        y--;
-                    }
-                    if (y == minH) {
-                        minH++;
-                        move = 0;
-                    }
-                }
-            }
-        }
-        System.out.println(robot.getAnswer());
+
+
+        System.out.println(map);
     }
 
 }
