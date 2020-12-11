@@ -1,6 +1,6 @@
 package model.parser;
 
-import model.object.Pair;
+import model.object.Point;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -17,7 +17,7 @@ public class Parser {
     private String[] splitArr;
 
     public Parser(String fileName) {
-        List<List<Pair<Integer, Integer>>> out;
+        List<List<Point<Integer, Integer>>> out;
         try (BufferedReader in = new BufferedReader(new FileReader(fileName))) {
             String line = in.readLine();
             this.splitArr = line.split("#");
@@ -26,58 +26,58 @@ public class Parser {
         }
     }
 
-    public List<Pair<Integer, Integer>> parseSizeMap() {
+    public List<Point<Integer, Integer>> parseSizeMap() {
         Matcher matcher = pattern.matcher(splitArr[0]);
-        List<Pair<Integer, Integer>> out = new ArrayList<>();
-        Pair<Integer, Integer> added;
+        List<Point<Integer, Integer>> out = new ArrayList<>();
+        Point<Integer, Integer> added;
         int maxX = 0, maxY = 0;
         while (matcher.find()) {
             String[] split = matcher.group(1).split(",");
-            added = new Pair<>(Integer.valueOf(split[0]), Integer.valueOf(split[1]));
-            if (maxX < added.getFirst()) {
-                maxX = added.getFirst();
-            } else if (maxY < added.getSecond()) {
-                maxY = added.getSecond();
+            added = new Point<>(Integer.valueOf(split[0]), Integer.valueOf(split[1]));
+            if (maxX < added.getX()) {
+                maxX = added.getX();
+            } else if (maxY < added.getY()) {
+                maxY = added.getY();
             }
             out.add(added);
         }
-        out.add(0, new Pair<>(maxX, maxY));
+        out.add(0, new Point<>(maxX, maxY));
         return out;
     }
 
-    public Pair<Integer, Integer> parseStartPositionRobot() {
+    public Point<Integer, Integer> parseStartPositionRobot() {
         Matcher matcher = pattern.matcher(splitArr[1]);
         if (matcher.find()){
             String[] split = matcher.group(1).split(",");
-            return new Pair<>(Integer.valueOf(split[0]), Integer.valueOf(split[1]));
+            return new Point<>(Integer.valueOf(split[0]), Integer.valueOf(split[1]));
         } else 
             throw new IllegalArgumentException("Wrong of position Robot");
     }
 
-    public List<List<Pair<Integer, Integer>>> parseWallPosition() { // парсер поменял на лист листов без проверки на 4
-        List<List<Pair<Integer, Integer>>> out = new ArrayList<>();
+    public List<List<Point<Integer, Integer>>> parseWallPosition() { // парсер поменял на лист листов без проверки на 4
+        List<List<Point<Integer, Integer>>> out = new ArrayList<>();
         for (String splitStr: splitArr[2].split(";")) {
-            List<Pair<Integer, Integer>> obstacle = new ArrayList<>();
+            List<Point<Integer, Integer>> obstacle = new ArrayList<>();
             Matcher matcher = pattern.matcher(splitStr);
             while (matcher.find()) {
                 String[] split = matcher.group(1).split(",");
-                obstacle.add(new Pair<>(Integer.valueOf(split[0]), Integer.valueOf(split[1])));
+                obstacle.add(new Point<>(Integer.valueOf(split[0]), Integer.valueOf(split[1])));
             }
             out.add(obstacle);
         }
         return out;
     }
 
-    public List<Pair<Character, Pair<Integer, Integer>>> parseBoosters() {
+    public List<Point<Character, Point<Integer, Integer>>> parseBoosters() {
         String[] split = splitArr[3].split(";");
-        List<Pair<Character, Pair<Integer, Integer>>> out = new ArrayList<>();
+        List<Point<Character, Point<Integer, Integer>>> out = new ArrayList<>();
         for (String splitStr : split) {
             Matcher matcher = pattern.matcher(splitStr);
             if (matcher.find()) {
                 String[] splitPair = matcher.group(1).split(",");
                 out.add(
-                        new Pair<>(splitStr.charAt(0),
-                                new Pair<>(Integer.valueOf(splitPair[0]), Integer.valueOf(splitPair[1])))
+                        new Point<>(splitStr.charAt(0),
+                                new Point<>(Integer.valueOf(splitPair[0]), Integer.valueOf(splitPair[1])))
                 );
             }
         }

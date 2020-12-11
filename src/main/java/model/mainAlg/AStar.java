@@ -1,7 +1,7 @@
 package model.mainAlg;
 
 import model.object.Map;
-import model.object.Pair;
+import model.object.Point;
 
 import java.util.*;
 
@@ -14,13 +14,13 @@ public class AStar {
         this.map = map;
     }
 
-    public List<Pair<Integer, Integer>> GetPath(int x, int y, int X, int Y) {
-        List<Pair<Integer, Integer>> pathToTarget = new ArrayList<>();
+    public List<Point<Integer, Integer>> GetPath(int x, int y, int X, int Y) {
+        List<Point<Integer, Integer>> pathToTarget = new ArrayList<>();
         closed = new HashSet<>();
         Queue<Node> open = new PriorityQueue<>(Comparator.comparingInt((Node node) -> node.F));
 
-        Pair<Integer, Integer> startPosition = new Pair<>(x, y);
-        Pair<Integer, Integer> targetPosition = new Pair<>(X, Y);
+        Point<Integer, Integer> startPosition = new Point<>(x, y);
+        Point<Integer, Integer> targetPosition = new Point<>(X, Y);
 
         if (startPosition == targetPosition) return pathToTarget;
 
@@ -33,7 +33,7 @@ public class AStar {
             if (nodeToCheck.position.equals(targetPosition)) {
                 return calculatePathFromNode(nodeToCheck);
             }
-            if (map.value(nodeToCheck.position.getFirst(), nodeToCheck.position.getSecond()) < 0) {
+            if (map.value(nodeToCheck.position.getX(), nodeToCheck.position.getY()) < 0) {
                 closed.add(nodeToCheck);
             } else {
                 if (!closed.contains(nodeToCheck)) {
@@ -45,12 +45,12 @@ public class AStar {
         return pathToTarget;
     }
 
-    public List<Pair<Integer, Integer>> calculatePathFromNode(Node node) {
-        List<Pair<Integer, Integer>> path = new ArrayList<>();
+    public List<Point<Integer, Integer>> calculatePathFromNode(Node node) {
+        List<Point<Integer, Integer>> path = new ArrayList<>();
         Node currentNode = node;
 
         while (currentNode.parent != null) {
-            path.add(new Pair<>(currentNode.position.getFirst(), currentNode.position.getSecond()));
+            path.add(new Point<>(currentNode.position.getX(), currentNode.position.getY()));
             currentNode = currentNode.parent;
         }
         Collections.reverse(path);
@@ -61,20 +61,20 @@ public class AStar {
     private List<Node> getNeighbours(Node node) {
         List<Node> neighbours = new ArrayList<>();
 
-        neighbours.add(new Node(node.G + 1, new Pair<>(
-                node.position.getFirst() - 1, node.position.getSecond()),
+        neighbours.add(new Node(node.G + 1, new Point<>(
+                node.position.getX() - 1, node.position.getY()),
                 node.finish,
                 node));
-        neighbours.add(new Node(node.G + 1, new Pair<>(
-                node.position.getFirst() + 1, node.position.getSecond()),
+        neighbours.add(new Node(node.G + 1, new Point<>(
+                node.position.getX() + 1, node.position.getY()),
                 node.finish,
                 node));
-        neighbours.add(new Node(node.G + 1, new Pair<>(
-                node.position.getFirst(), node.position.getSecond() - 1),
+        neighbours.add(new Node(node.G + 1, new Point<>(
+                node.position.getX(), node.position.getY() - 1),
                 node.finish,
                 node));
-        neighbours.add(new Node(node.G + 1, new Pair<>(
-                node.position.getFirst(), node.position.getSecond() + 1),
+        neighbours.add(new Node(node.G + 1, new Point<>(
+                node.position.getX(), node.position.getY() + 1),
                 node.finish,
                 node));
         return neighbours;
@@ -82,20 +82,20 @@ public class AStar {
 
 
     public class Node {
-        public Pair<Integer, Integer> position;
-        public Pair<Integer, Integer> finish;
+        public Point<Integer, Integer> position;
+        public Point<Integer, Integer> finish;
         public Node parent;
         public int F; // F=G+H
         public int G; // расстояние от старта до ноды
         public int H; // расстояние от ноды до цели
 
-        public Node(int g, Pair<Integer, Integer> nodePosition, Pair<Integer, Integer> targetPosition, Node previousNode) {
+        public Node(int g, Point<Integer, Integer> nodePosition, Point<Integer, Integer> targetPosition, Node previousNode) {
             position = nodePosition;
             finish = targetPosition;
             parent = previousNode;
             G = g;
-            H = Math.abs(targetPosition.getFirst() - position.getFirst())
-                    + Math.abs(targetPosition.getSecond() - position.getSecond());
+            H = Math.abs(targetPosition.getX() - position.getX())
+                    + Math.abs(targetPosition.getY() - position.getY());
             F = G + H;
         }
 

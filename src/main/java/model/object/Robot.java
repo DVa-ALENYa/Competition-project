@@ -37,17 +37,32 @@ public class Robot {
     }
 
     public Robot(Parser parser) {
-        Pair<Integer, Integer> pair = parser.parseStartPositionRobot();
-        this.X = pair.getFirst();
-        this.Y = pair.getSecond();
+        Point<Integer, Integer> point = parser.parseStartPositionRobot();
+        this.X = point.getX();
+        this.Y = point.getY();
         manipulators = new ArrayList<>(3);
         manipulators.add(0, new Manipulator(X + 1, Y - 1));
         manipulators.add(1, new Manipulator(X + 1, Y));
         manipulators.add(2, new Manipulator(X + 1, Y + 1));
     }
 
+    public List<Point<Integer, Integer>> getManipulators() {
+        List<Point<Integer, Integer>> out = new ArrayList<>();
+        for (Manipulator manipulator : manipulators) {
+            out.add(manipulator.getPoint());
+        }
+        return out;
+    }
+
+    public Point<Integer, Integer> getPoint() {
+        return new Point<>(X, Y);
+    }
+
     public void moveW() {
         this.Y--;
+        for (Manipulator manipulator : manipulators) {
+            manipulator.moveW();
+        }
         switch (position) {
             case A:
                 turnQ();
@@ -59,15 +74,15 @@ public class Robot {
                 turnE();
                 turnE();
                 break;
-        }
-        for (Manipulator manipulator : manipulators) {
-            manipulator.moveW();
         }
         answer.append('S');
     }
 
     public void moveS() {
         this.Y++;
+        for (Manipulator manipulator : manipulators) {
+            manipulator.moveS();
+        }
         switch (position) {
             case A:
                 turnE();
@@ -79,15 +94,15 @@ public class Robot {
                 turnE();
                 turnE();
                 break;
-        }
-        for (Manipulator manipulator : manipulators) {
-            manipulator.moveS();
         }
         answer.append('W');
     }
 
     public void moveA() {
         this.X--;
+        for (Manipulator manipulator : manipulators) {
+            manipulator.moveA();
+        }
         switch (position) {
             case D:
                 turnE();
@@ -100,14 +115,14 @@ public class Robot {
                 turnE();
                 break;
         }
-        for (Manipulator manipulator : manipulators) {
-            manipulator.moveA();
-        }
         answer.append('A');
     }
 
     public void moveD() {
         this.X++;
+        for (Manipulator manipulator : manipulators) {
+            manipulator.moveD();
+        }
         switch (position) {
             case A:
                 turnE();
@@ -120,31 +135,28 @@ public class Robot {
                 turnQ();
                 break;
         }
-        for (Manipulator manipulator : manipulators) {
-            manipulator.moveD();
-        }
         answer.append('D');
     }
 
     public void turnQ() {
-        for (Manipulator manipulator : manipulators) {
-            manipulator.turnQ(this.X, this.Y);
-        }
         position = Position.values()[(position.number + 3) % 4];
+        for (Manipulator manipulator : manipulators) {
+            manipulator.turnE(this.X, this.Y);
+        }
         answer.append('Q');
     }
 
     public void turnE() {
-        for (Manipulator manipulator : manipulators) {
-            manipulator.turnE(this.X, this.Y);
-        }
         position = Position.values()[(position.number + 1) % 4];
+        for (Manipulator manipulator : manipulators) {
+            manipulator.turnQ(this.X, this.Y);
+        }
         answer.append('E');
     }
 
-    public void moveTo(Pair<Integer, Integer> point) {
-        int helpX = point.getFirst() - X;
-        int helpY = point.getSecond() - Y;
+    public void moveTo(Point<Integer, Integer> point) {
+        int helpX = point.getX() - X;
+        int helpY = point.getY() - Y;
         if (helpX == 0) {
             if (helpY == 1) {
                 moveS();
@@ -173,12 +185,16 @@ public class Robot {
             this.Y = y;
         }
 
+        public Point<Integer, Integer> getPoint() {
+            return new Point<>(X, Y);
+        }
+
         private void moveW() {
-            this.Y++;
+            this.Y--;
         }
 
         private void moveS() {
-            this.Y--;
+            this.Y++;
         }
 
         private void moveA() {
