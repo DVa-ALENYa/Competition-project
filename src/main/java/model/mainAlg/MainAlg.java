@@ -33,28 +33,26 @@ public class MainAlg {
         //System.out.println(map);
         map.paint(robot.getPoint());
         Point<Integer, Integer> current;
-        while (true) {
-            System.out.println("Robot " + robot.getPoint());
+        do {
+            System.out.println("Robot " + robot.getPoint() + " E - " + map.getEmpties() + " P - " + map.getPainted());
             current = findEmpty(robot.getX(), robot.getY());
             System.out.println(current);
             if (current.getX().equals(robot.getX()) && current.getY().equals(robot.getY())) {
-                //System.out.println(robot.getAnswer());
-                try (FileWriter writer = new FileWriter("src/main/resources/ans.txt", false)) {
-                    writer.write(robot.getAnswer().toString());
-                } catch (IOException ex) {
-                    System.out.println(ex.getMessage());
-                }
                 break;
             }
             path = new AStar(map).getPath(robot.getX(), robot.getY(), current.getX(), current.getY());
             for (Point<Integer, Integer> p : path) {
                 robot.moveTo(p);
                 map.paint(new Point<>(robot.getX(), robot.getY()));
-                for (Point<Integer, Integer> point : robot.getManipulators()) {
-                    map.paint(point);
-                }
+                    map.paint(robot.getManipulators());
             }
             //System.out.println(robot.getAnswer().toString());
+        } while (map.getEmpties() > map.getPainted());
+        //System.out.println(robot.getAnswer());
+        try (FileWriter writer = new FileWriter("src/main/resources/ans.txt", false)) {
+            writer.write(robot.getAnswer().toString());
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
         }
     }
 
@@ -63,12 +61,13 @@ public class MainAlg {
         closed = new HashSet<>();
         Point<Integer, Integer> start = new Point<>(x, y);
         open.addAll(neighbours(start));
+        closed.add(start);
         while (!open.isEmpty()) {
-            System.out.println("999");
             int n = open.size();
             for (int i = 0; i < n; i++) {
                 Point<Integer, Integer> current = open.poll();
-                if (closed.size() >= map.getEmpties()) return start;
+                System.out.println(closed.size());
+                if (map.getEmpties() <= map.getPainted()) return start;
                 if (map.value(current.getX(), current.getY()) < 10) {
                     return current;
                 }

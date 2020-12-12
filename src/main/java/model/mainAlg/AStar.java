@@ -16,7 +16,7 @@ public class AStar {
     }
 
     public List<Point<Integer, Integer>> getPath(int x, int y, int X, int Y) {
-        System.out.println("thinking...");
+        //System.out.println("thinking...");
         List<Point<Integer, Integer>> pathToTarget = new ArrayList<>();
         if(x == X && y == Y) return pathToTarget;
         closed = new HashSet<>();
