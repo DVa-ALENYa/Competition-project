@@ -11,11 +11,8 @@ public class Map {
     @Getter
     private int X, Y; // map size
     private ArrayList<ArrayList<Integer>> map;
-    @Getter
-    private int empties, painted;
     public Map(Parser parser) {
-        empties = 0;
-        painted = 0;
+
         createMap(parser.parseSizeMap());
         createObstacles(parser.parseWallPosition());
 //            createBoosters(parser.parseBoosters());
@@ -45,8 +42,6 @@ public class Map {
         for (double i = 0.5; i < Y; i += 1) {
             for (double j = 0.5; j < X; j += 1) {
                 if (isInside(coordinates, new Point<>(j, i))) {
-                    if(value == 0) empties++;
-                    else empties--;
                     map.get((int) (i - 0.5)).set((int) (j - 0.5), value);
                 }
             }
@@ -110,7 +105,6 @@ public class Map {
             int value = map.get(coordinate.getY()).get(coordinate.getX());
             if (value < 10 && value >= 0) {
                 value += 10;
-                painted++;
                 map.get(coordinate.getY()).set(coordinate.getX(), value);
             }
         }

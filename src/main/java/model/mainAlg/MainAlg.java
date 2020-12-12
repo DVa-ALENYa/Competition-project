@@ -17,8 +17,8 @@ public class MainAlg {
 
     private static Map map;
     private static Robot robot;
-    private static Set<Point<Integer, Integer>> closed;
     private static Queue<Point<Integer, Integer>> open;
+    private static ArrayList<ArrayList<Integer>> closed;
 
     static void init() {
         Parser parser = new Parser(file);
@@ -34,9 +34,9 @@ public class MainAlg {
         map.paint(robot.getPoint());
         Point<Integer, Integer> current;
         do {
-            System.out.println("Robot " + robot.getPoint() + " E - " + map.getEmpties() + " P - " + map.getPainted());
+           // System.out.println("Robot " + robot.getPoint() + " E - " + map.getEmpties() + " P - " + map.getPainted());
             current = findEmpty(robot.getX(), robot.getY());
-            System.out.println(current);
+            //System.out.println(current);
             if (current.getX().equals(robot.getX()) && current.getY().equals(robot.getY())) {
                 break;
             }
@@ -47,7 +47,7 @@ public class MainAlg {
                     map.paint(robot.getManipulators());
             }
             //System.out.println(robot.getAnswer().toString());
-        } while (map.getEmpties() > map.getPainted());
+        } while (true);
         //System.out.println(robot.getAnswer());
         try (FileWriter writer = new FileWriter("src/main/resources/ans.txt", false)) {
             writer.write(robot.getAnswer().toString());
@@ -58,24 +58,29 @@ public class MainAlg {
 
     public static Point<Integer, Integer> findEmpty(int x, int y) {//X=284, Y=343
         open = new LinkedList<>();
-        closed = new HashSet<>();
+        closed = new ArrayList<>();
+        for (int i = 0; i < map.getY(); i++) {
+            ArrayList<Integer> row = new ArrayList<>(map.getX());
+            for (int j = 0; j < map.getX(); j++) {
+                row.add(0);
+            }
+            closed.add(row);
+        }
         Point<Integer, Integer> start = new Point<>(x, y);
         open.addAll(neighbours(start));
-        closed.add(start);
         while (!open.isEmpty()) {
             int n = open.size();
             for (int i = 0; i < n; i++) {
                 Point<Integer, Integer> current = open.poll();
-                System.out.println(closed.size());
-                if (map.getEmpties() <= map.getPainted()) return start;
                 if (map.value(current.getX(), current.getY()) < 10) {
                     return current;
                 }
                 List<Point<Integer, Integer>> neig;
                 neig = neighbours(current);
+                closed.get(current.getY()).set(current.getX(), 1);
                 open.addAll(neighbours(current));
-                closed.add(current);
             }
+
         }
         return start;
 
@@ -109,9 +114,7 @@ public class MainAlg {
     }
 
     private static boolean cont(Point<Integer, Integer> point) {
-        for (Point<Integer, Integer> p : closed) {
-            if (point.getX().equals(p.getX()) && point.getY().equals(p.getY())) return true;
-        }
+        if(closed.get(point.getY()).get(point.getX()) == 1) return true;
         for (Point<Integer, Integer> p : open) {
             if (point.getX().equals(p.getX()) && point.getY().equals(p.getY())) return true;
         }
