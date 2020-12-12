@@ -76,13 +76,6 @@ public class Map {
             return map.get(y).get(x);
     }
 
-    public void setValue(int x, int y, int value) {  // delete нинада больше
-        if (x >= X || y >= Y || x < 0 || y < 0)
-            throw new IndexOutOfBoundsException();
-        else
-            map.get(y).set(x, value);
-    }
-
     public void createBoosters(List<Point<Character, Point<Integer, Integer>>> coordinates) {
         for (int i = 0; i < coordinates.size(); i++) {
             Point<Character, Point<Integer, Integer>> booster = coordinates.get(i);
@@ -108,15 +101,6 @@ public class Map {
                 map.get(coordinate.getY()).set(coordinate.getX(), value);
             }
         }
-    }
-
-    private void checkBounding(List<Point<Integer, Integer>> coordinates) { // это нам уже не надо (вроде)
-        if (
-                !coordinates.get(0).getX().equals(coordinates.get(3).getX()) ||
-                        !coordinates.get(0).getY().equals(coordinates.get(1).getY()) ||
-                        !coordinates.get(1).getX().equals(coordinates.get(2).getX()) ||
-                        !coordinates.get(2).getY().equals(coordinates.get(3).getY())
-        ) throw new IllegalArgumentException();
     }
 
     @Override

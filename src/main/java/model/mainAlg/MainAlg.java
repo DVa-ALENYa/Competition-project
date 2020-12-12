@@ -72,11 +72,10 @@ public class MainAlg {
             int n = open.size();
             for (int i = 0; i < n; i++) {
                 Point<Integer, Integer> current = open.poll();
+                assert current != null;
                 if (map.value(current.getX(), current.getY()) < 10) {
                     return current;
                 }
-                List<Point<Integer, Integer>> neig;
-                neig = neighbours(current);
                 closed.get(current.getY()).set(current.getX(), 1);
                 open.addAll(neighbours(current));
             }
@@ -92,33 +91,33 @@ public class MainAlg {
         Point<Integer, Integer> add;
         if (map.value(x + 1, y) >= 0) {
             add = new Point<>(x + 1, y);
-            if (!cont(add))
+            if (containPoint(add))
                 ans.add(new Point<>(x + 1, y));
         }
         if (map.value(x - 1, y) >= 0) {
             add = new Point<>(x - 1, y);
-            if (!cont(add))
+            if (containPoint(add))
                 ans.add(new Point<>(x - 1, y));
         }
         if (map.value(x, y + 1) >= 0) {
             add = new Point<>(x, y + 1);
-            if (!cont(add))
+            if (containPoint(add))
                 ans.add(new Point<>(x, y + 1));
         }
         if (map.value(x, y - 1) >= 0) {
             add = new Point<>(x, y - 1);
-            if (!cont(add))
+            if (containPoint(add))
                 ans.add(new Point<>(x, y - 1));
         }
         return ans;
     }
 
-    private static boolean cont(Point<Integer, Integer> point) {
-        if(closed.get(point.getY()).get(point.getX()) == 1) return true;
+    private static boolean containPoint(Point<Integer, Integer> point) {
+        if(closed.get(point.getY()).get(point.getX()) == 1) return false;
         for (Point<Integer, Integer> p : open) {
-            if (point.getX().equals(p.getX()) && point.getY().equals(p.getY())) return true;
+            if (point.getX().equals(p.getX()) && point.getY().equals(p.getY())) return false;
         }
-        return false;
+        return true;
     }
 
 }
