@@ -8,12 +8,15 @@ import java.util.List;
 
 @Getter
 public class Map {
+    @Getter
     private int X, Y; // map size
     private ArrayList<ArrayList<Integer>> map;
-
+    @Getter
+    private int empties;
     public Map(Parser parser) {
-            createMap(parser.parseSizeMap());
-            createObstacles(parser.parseWallPosition());
+        empties = 0;
+        createMap(parser.parseSizeMap());
+        createObstacles(parser.parseWallPosition());
 //            createBoosters(parser.parseBoosters());
     }
 
@@ -22,24 +25,27 @@ public class Map {
         double x = p.getX();
         double y = p.getY();
         int j = points.size() - 1;
-        for(int i = 0; i < points.size(); i++) {
+        for (int i = 0; i < points.size(); i++) {
             double xp = points.get(i).getX();
             double yp = points.get(i).getY();
             double xp_prev = points.get(j).getX();
             double yp_prev = points.get(j).getY();
-            if (((yp <= y && y <yp_prev) || (yp_prev <= y && y < yp))
-            && (x > (xp_prev - xp) * (y - yp) / (yp_prev - yp) + xp))
-            result = !result;
+            if (((yp <= y && y < yp_prev) || (yp_prev <= y && y < yp))
+                    && (x > (xp_prev - xp) * (y - yp) / (yp_prev - yp) + xp))
+                result = !result;
             j = i;
         }
         return result;
     }
 
 
-    private void createWalls(List<Point<Integer, Integer>> coordinates, int value){
-        for (double i = 0.5; i < Y; i+=1) {
-            for (double j = 0.5; j < X; j+=1) {
-                if(isInside(coordinates, new Point<>(j, i))) map.get((int) (i - 0.5)).set((int) (j - 0.5), value);
+    private void createWalls(List<Point<Integer, Integer>> coordinates, int value) {
+        for (double i = 0.5; i < Y; i += 1) {
+            for (double j = 0.5; j < X; j += 1) {
+                if (isInside(coordinates, new Point<>(j, i))) {
+                    map.get((int) (i - 0.5)).set((int) (j - 0.5), value);
+                    empties++;
+                }
             }
         }
     }
@@ -67,7 +73,7 @@ public class Map {
 
     public int value(int x, int y) {
         if (x >= X || y >= Y || x < 0 || y < 0)
-            return -2;
+            return -1;
         else
             return map.get(y).get(x);
     }
@@ -97,10 +103,12 @@ public class Map {
     }
 
     public void paint(Point<Integer, Integer> coordinate) {
-        if (coordinate.getX() >= 0 && coordinate.getY() >= 0 &&coordinate.getX() < X && coordinate.getY() < Y) {
+        if (coordinate.getX() >= 0 && coordinate.getY() >= 0 && coordinate.getX() < X && coordinate.getY() < Y) {
             int value = map.get(coordinate.getY()).get(coordinate.getX());
-            value += 10;
-            map.get(coordinate.getY()).set(coordinate.getX(), value);
+            if (value < 10 && value >= 0) {
+                value += 10;
+                map.get(coordinate.getY()).set(coordinate.getX(), value);
+            }
         }
     }
 
@@ -117,9 +125,9 @@ public class Map {
     public String toString() {
         for (int i = map.size() - 1; i >= 0; i--) {
             ArrayList<Integer> row = map.get(i);
-            for(int j : row){
-                if(j == -1) System.out.print("ZZ");
-                else if(j == 0) System.out.print("__");
+            for (int j : row) {
+                if (j == -1) System.out.print("ZZ");
+                else if (j == 0) System.out.print("__");
             }
             System.out.println();
         }

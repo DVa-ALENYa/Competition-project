@@ -50,7 +50,7 @@ public class Parser {
         if (matcher.find()){
             String[] split = matcher.group(1).split(",");
             return new Point<>(Integer.valueOf(split[0]), Integer.valueOf(split[1]));
-        } else 
+        } else
             throw new IllegalArgumentException("Wrong of position Robot");
     }
 

@@ -22,7 +22,7 @@ public class Robot {
     private final List<Manipulator> manipulators;
 
     private Position position = Position.D;
-
+    private Map map;
     private enum Position {
         W(0),
         A(1),
@@ -36,7 +36,8 @@ public class Robot {
         }
     }
 
-    public Robot(Parser parser) {
+    public Robot(Parser parser, Map map) {
+        this.map = map;
         Point<Integer, Integer> point = parser.parseStartPositionRobot();
         this.X = point.getX();
         this.Y = point.getY();
@@ -155,6 +156,7 @@ public class Robot {
     }
 
     public void moveTo(Point<Integer, Integer> point) {
+        if(map.value(point.getX(), point.getY()) < 0) throw new IllegalStateException();
         int helpX = point.getX() - X;
         int helpY = point.getY() - Y;
         if (helpX == 0) {
