@@ -3,8 +3,11 @@ package model.mainAlg;
 import model.object.Map;
 import model.object.Point;
 import model.object.Robot;
+
 import model.parser.Parser;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.*;
 
 
@@ -14,162 +17,107 @@ public class MainAlg {
 
     private static Map map;
     private static Robot robot;
-    private static int X;
-    private static int Y;
+    private static Queue<Point<Integer, Integer>> open;
+    private static ArrayList<ArrayList<Integer>> closed;
 
     static void init() {
         Parser parser = new Parser(file);
         map = new Map(parser);
-        robot = new Robot(parser);
-        X = robot.getX();
-        Y = robot.getY();
-    }
-
-    public static class Node {
-        public Point<Integer, Integer> position;
-        public Node parent;
-
-        public Node(Point<Integer, Integer> nodePosition, Node previousNode) {
-            position = nodePosition;
-            parent = previousNode;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            Node node = (Node) o;
-            return Objects.equals(position, node.position);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(position);
-        }
-    }
-
-
-    private static List<Node> getNeighbours(Node node) {
-        List<Node> neighbours = new ArrayList<>();
-        if (map.value(node.position.getX() - 1, node.position.getY()) >= 0 &&
-                map.value(node.position.getX() - 1, node.position.getY()) < 1)
-            neighbours.add(new Node(
-                    new Point<>(node.position.getX() - 1, node.position.getY()),
-                    node));
-//        if (map.value(node.position.getX() - 2, node.position.getY()) >= 0 &&
-//                map.value(node.position.getX() - 2, node.position.getY()) < 9)
-//            neighbours.add(new Node(
-//                    new Point<>(node.position.getX() - 2, node.position.getY()),
-//                    node));
-//        if (map.value(node.position.getX() - 2, node.position.getY() + 1) >= 0 &&
-//                map.value(node.position.getX() - 2, node.position.getY()) < 9)
-//            neighbours.add(new Node(
-//                    new Point<>(node.position.getX() - 2, node.position.getY() + 1),
-//                    node));
-//        if (map.value(node.position.getX() - 2, node.position.getY() - 1) >= 0 &&
-//                map.value(node.position.getX() - 2, node.position.getY()) < 9)
-//            neighbours.add(new Node(
-//                    new Point<>(node.position.getX() - 2, node.position.getY() - 1),
-//                    node));
-
-
-        if (map.value(node.position.getX() + 1, node.position.getY()) >= 0 &&
-                map.value(node.position.getX() + 1, node.position.getY()) < 1)
-            neighbours.add(new Node(
-                    new Point<>(node.position.getX() + 1, node.position.getY()),
-                    node));
-//        if (map.value(node.position.getX() + 2, node.position.getY()) >= 0 &&
-//                map.value(node.position.getX() + 2, node.position.getY()) < 9)
-//            neighbours.add(new Node(
-//                    new Point<>(node.position.getX() + 2, node.position.getY()),
-//                    node));
-//        if (map.value(node.position.getX() + 2, node.position.getY() - 1) >= 0 &&
-//                map.value(node.position.getX() + 2, node.position.getY() - 1) < 9)
-//            neighbours.add(new Node(
-//                    new Point<>(node.position.getX() + 2, node.position.getY() - 1),
-//                    node));
-//        if (map.value(node.position.getX() + 2, node.position.getY() + 1) >= 0 &&
-//                map.value(node.position.getX() + 2, node.position.getY() + 1) < 9)
-//            neighbours.add(new Node(
-//                    new Point<>(node.position.getX() + 1, node.position.getY() + 1),
-//                    node));
-
-
-        if (map.value(node.position.getX(), node.position.getY() - 1) >= 0&&
-                map.value(node.position.getX(), node.position.getY() - 1) < 1)
-            neighbours.add(new Node(
-                    new Point<>(node.position.getX(), node.position.getY() - 1),
-                    node));
-//        if (map.value(node.position.getX(), node.position.getY() - 2) >= 0&&
-//                map.value(node.position.getX(), node.position.getY() - 2) < 9)
-//            neighbours.add(new Node(
-//                    new Point<>(node.position.getX(), node.position.getY() - 2),
-//                    node));
-//        if (map.value(node.position.getX()-1, node.position.getY() - 2) >= 0&&
-//                map.value(node.position.getX()-1, node.position.getY() - 2) < 9)
-//            neighbours.add(new Node(
-//                    new Point<>(node.position.getX()-1, node.position.getY() - 2),
-//                    node));
-//        if (map.value(node.position.getX()+1, node.position.getY() - 2) >= 0&&
-//                map.value(node.position.getX()+1, node.position.getY() - 2) < 9)
-//            neighbours.add(new Node(
-//                    new Point<>(node.position.getX()+1, node.position.getY() - 2),
-//                    node));
-
-
-        if (map.value(node.position.getX(), node.position.getY() + 1) >= 0 &&
-                map.value(node.position.getX(), node.position.getY() + 1) < 1)
-            neighbours.add(new Node(
-                    new Point<>(node.position.getX(), node.position.getY() + 1),
-                    node));
-//        if (map.value(node.position.getX(), node.position.getY() + 2) >= 0 &&
-//                map.value(node.position.getX(), node.position.getY() + 2) < 9)
-//            neighbours.add(new Node(
-//                    new Point<>(node.position.getX(), node.position.getY() + 2),
-//                    node));
-//        if (map.value(node.position.getX()-1, node.position.getY() + 2) >= 0 &&
-//                map.value(node.position.getX()-1, node.position.getY() + 2) < 9)
-//            neighbours.add(new Node(
-//                    new Point<>(node.position.getX()-1, node.position.getY() + 2),
-//                    node));
-//        if (map.value(node.position.getX()+1, node.position.getY() + 2) >= 0 &&
-//                map.value(node.position.getX()+1, node.position.getY() + 2) < 9)
-//            neighbours.add(new Node(
-//                    new Point<>(node.position.getX()+1, node.position.getY() + 2),
-//                    node));
-
-        return neighbours;
+        robot = new Robot(parser, map);
     }
 
 
     public static void main(String[] args) {
         init();
-        Set<Node> closed = new HashSet<>();
-        Queue<Node> open = new PriorityQueue<>(Comparator.comparingInt((Node node) ->
-                Math.abs(node.position.getX() - robot.getX()) + Math.abs(node.position.getY() - robot.getY()))
-        );
-        Node startNode = new Node(new Point<>(robot.getX(), robot.getY()), null);
-//        map.paint(robot.getManipulators());
+        List<Point<Integer, Integer>> path;
+        //System.out.println(map);
         map.paint(robot.getPoint());
-        closed.add(startNode);
-        open.addAll(getNeighbours(startNode));
-        while (!open.isEmpty()) {
-            Node current = open.poll();
-            if (!closed.contains(current)) {
-                List<Point<Integer, Integer>> pointsList =
-                        new AStar(map).GetPath(robot.getX(), robot.getY(), current.position.getX(), current.position.getY());
-                for (Point<Integer, Integer> point : pointsList) {
-                    robot.moveTo(point);
-                    System.out.println(point);
-//                    System.out.println(robot.getManipulators());
-//                    map.paint(robot.getManipulators());
-                    map.paint(robot.getPoint());
-                }
-                closed.add(current);
-                open.addAll(getNeighbours(current));
+        Point<Integer, Integer> current;
+        do {
+           // System.out.println("Robot " + robot.getPoint() + " E - " + map.getEmpties() + " P - " + map.getPainted());
+            current = findEmpty(robot.getX(), robot.getY());
+            //System.out.println(current);
+            if (current.getX().equals(robot.getX()) && current.getY().equals(robot.getY())) {
+                break;
             }
+            path = new AStar(map).getPath(robot.getX(), robot.getY(), current.getX(), current.getY());
+            for (Point<Integer, Integer> p : path) {
+                robot.moveTo(p);
+                map.paint(new Point<>(robot.getX(), robot.getY()));
+                    map.paint(robot.getManipulators());
+            }
+            //System.out.println(robot.getAnswer().toString());
+        } while (true);
+        //System.out.println(robot.getAnswer());
+        try (FileWriter writer = new FileWriter("src/main/resources/ans.txt", false)) {
+            writer.write(robot.getAnswer().toString());
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
         }
-        System.out.println(robot.getAnswer().toString());
-        System.out.println(map);
     }
+
+    public static Point<Integer, Integer> findEmpty(int x, int y) {//X=284, Y=343
+        open = new LinkedList<>();
+        closed = new ArrayList<>();
+        for (int i = 0; i < map.getY(); i++) {
+            ArrayList<Integer> row = new ArrayList<>(map.getX());
+            for (int j = 0; j < map.getX(); j++) {
+                row.add(0);
+            }
+            closed.add(row);
+        }
+        Point<Integer, Integer> start = new Point<>(x, y);
+        open.addAll(neighbours(start));
+        while (!open.isEmpty()) {
+            int n = open.size();
+            for (int i = 0; i < n; i++) {
+                Point<Integer, Integer> current = open.poll();
+                assert current != null;
+                if (map.value(current.getX(), current.getY()) < 10) {
+                    return current;
+                }
+                closed.get(current.getY()).set(current.getX(), 1);
+                open.addAll(neighbours(current));
+            }
+
+        }
+        return start;
+
+    }
+
+    private static List<Point<Integer, Integer>> neighbours(Point<Integer, Integer> point) {
+        List<Point<Integer, Integer>> ans = new ArrayList<>();
+        int x = point.getX(), y = point.getY();
+        Point<Integer, Integer> add;
+        if (map.value(x + 1, y) >= 0) {
+            add = new Point<>(x + 1, y);
+            if (containPoint(add))
+                ans.add(new Point<>(x + 1, y));
+        }
+        if (map.value(x - 1, y) >= 0) {
+            add = new Point<>(x - 1, y);
+            if (containPoint(add))
+                ans.add(new Point<>(x - 1, y));
+        }
+        if (map.value(x, y + 1) >= 0) {
+            add = new Point<>(x, y + 1);
+            if (containPoint(add))
+                ans.add(new Point<>(x, y + 1));
+        }
+        if (map.value(x, y - 1) >= 0) {
+            add = new Point<>(x, y - 1);
+            if (containPoint(add))
+                ans.add(new Point<>(x, y - 1));
+        }
+        return ans;
+    }
+
+    private static boolean containPoint(Point<Integer, Integer> point) {
+        if(closed.get(point.getY()).get(point.getX()) == 1) return false;
+        for (Point<Integer, Integer> p : open) {
+            if (point.getX().equals(p.getX()) && point.getY().equals(p.getY())) return false;
+        }
+        return true;
+    }
+
 }

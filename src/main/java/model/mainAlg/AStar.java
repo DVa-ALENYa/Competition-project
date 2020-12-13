@@ -1,5 +1,6 @@
 package model.mainAlg;
 
+import lombok.Getter;
 import model.object.Map;
 import model.object.Point;
 
@@ -8,16 +9,18 @@ import java.util.*;
 public class AStar {
     private final Map map;
     public Set<Node> closed;
-
+    Queue<Node> open;
 
     public AStar(Map map) {
         this.map = map;
     }
 
-    public List<Point<Integer, Integer>> GetPath(int x, int y, int X, int Y) {
+    public List<Point<Integer, Integer>> getPath(int x, int y, int X, int Y) {
+        //System.out.println("thinking...");
         List<Point<Integer, Integer>> pathToTarget = new ArrayList<>();
+        if(x == X && y == Y) return pathToTarget;
         closed = new HashSet<>();
-        Queue<Node> open = new PriorityQueue<>(Comparator.comparingInt((Node node) -> node.F));
+        open = new PriorityQueue<>(Comparator.comparing(Node::getF));
 
         Point<Integer, Integer> startPosition = new Point<>(x, y);
         Point<Integer, Integer> targetPosition = new Point<>(X, Y);
@@ -29,18 +32,13 @@ public class AStar {
         open.addAll(getNeighbours(startNode));
         while (!open.isEmpty()) {
             Node nodeToCheck = open.poll();
-
+           // System.out.println(nodeToCheck);
             if (nodeToCheck.position.equals(targetPosition)) {
+
                 return calculatePathFromNode(nodeToCheck);
             }
-            if (map.value(nodeToCheck.position.getX(), nodeToCheck.position.getY()) < 0) {
-                closed.add(nodeToCheck);
-            } else {
-                if (!closed.contains(nodeToCheck)) {
-                    closed.add(nodeToCheck);
-                    open.addAll(getNeighbours(nodeToCheck));
-                }
-            }
+            closed.add(nodeToCheck);
+            getNeighbours(nodeToCheck).stream().filter(v -> !containsNode(v)).forEach(v -> open.add(v));
         }
         return pathToTarget;
     }
@@ -48,7 +46,6 @@ public class AStar {
     public List<Point<Integer, Integer>> calculatePathFromNode(Node node) {
         List<Point<Integer, Integer>> path = new ArrayList<>();
         Node currentNode = node;
-
         while (currentNode.parent != null) {
             path.add(new Point<>(currentNode.position.getX(), currentNode.position.getY()));
             currentNode = currentNode.parent;
@@ -57,26 +54,44 @@ public class AStar {
         return path;
     }
 
+    private Boolean containsNode(Node node){
+        for(Node v : closed){
+            if (node.position.getX().equals(v.position.getX()) &&
+                    node.position.getY().equals(v.position.getY())
+                    ) return true;
+        }
+        for(Node v : open){
+            if (node.position.getX().equals(v.position.getX()) &&
+                    node.position.getY().equals(v.position.getY())
+                    && v.F >= node.F) return true;
+        }
+        return false;
+    }
+
 
     private List<Node> getNeighbours(Node node) {
         List<Node> neighbours = new ArrayList<>();
-
-        neighbours.add(new Node(node.G + 1, new Point<>(
-                node.position.getX() - 1, node.position.getY()),
-                node.finish,
-                node));
-        neighbours.add(new Node(node.G + 1, new Point<>(
-                node.position.getX() + 1, node.position.getY()),
-                node.finish,
-                node));
-        neighbours.add(new Node(node.G + 1, new Point<>(
-                node.position.getX(), node.position.getY() - 1),
-                node.finish,
-                node));
-        neighbours.add(new Node(node.G + 1, new Point<>(
-                node.position.getX(), node.position.getY() + 1),
-                node.finish,
-                node));
+        int x = node.position.getX(), y = node.position.getY();
+        if(map.value(x - 1, y) >= 0)
+            neighbours.add(new Node(node.G + 1, new Point<>(
+                    x - 1, y),
+                    node.finish,
+                    node));
+        if(map.value(x + 1, y) >= 0)
+            neighbours.add(new Node(node.G + 1, new Point<>(
+                    x + 1, y),
+                    node.finish,
+                    node));
+        if(map.value(x, y - 1) >= 0)
+            neighbours.add(new Node(node.G + 1, new Point<>(
+                    x, y - 1),
+                    node.finish,
+                    node));
+        if(map.value(x, y + 1) >= 0)
+            neighbours.add(new Node(node.G + 1, new Point<>(
+                    x, y + 1),
+                    node.finish,
+                    node));
         return neighbours;
     }
 
@@ -85,6 +100,7 @@ public class AStar {
         public Point<Integer, Integer> position;
         public Point<Integer, Integer> finish;
         public Node parent;
+        @Getter
         public int F; // F=G+H
         public int G; // расстояние от старта до ноды
         public int H; // расстояние от ноды до цели
@@ -97,6 +113,17 @@ public class AStar {
             H = Math.abs(targetPosition.getX() - position.getX())
                     + Math.abs(targetPosition.getY() - position.getY());
             F = G + H;
+        }
+
+        @Override
+        public String toString() {
+            return "Node{" +
+                    "position=" + position +
+                    ", finish=" + finish +
+                    ", F=" + F +
+                    ", G=" + G +
+                    ", H=" + H +
+                    '}';
         }
 
         @Override
