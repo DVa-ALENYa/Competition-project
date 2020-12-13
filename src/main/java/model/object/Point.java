@@ -8,6 +8,12 @@ import java.util.Objects;
 @Setter
 @Getter
 public class Point<T, T1> {
+    @Getter @Setter
+    private int dist = 0;
+    @Getter @Setter
+    private int g = 0;
+    @Getter @Setter
+    private int F = 0;
     @Getter
     private T X;
     @Getter
@@ -15,6 +21,14 @@ public class Point<T, T1> {
     public Point(T X, T1 Y){
         this.X = X;
         this.Y = Y;
+    }
+
+    public Point(T X, T1 Y, int dist, int g){
+        this.X = X;
+        this.Y = Y;
+        this.dist = dist;
+        this.g = g;
+        F = g + dist;
     }
 
     public void set(T first, T1 second){
