@@ -13,7 +13,7 @@ import java.util.*;
 
 public class MainAlg {
 
-    private static final String file = "src/main/resources/example-01.desc";
+    //private static final String file = "src/main/resources/example-01.desc";
 
     private static Map map;
     private static Robot robot;
@@ -32,7 +32,7 @@ public class MainAlg {
         String output;
         File file = new File("src/main/resources/input");
         final File[] files = file.listFiles();
-        for (int i = 298; i < files.length - 1; i++) {
+        for (int i = 0; i < files.length; i++) {
             init(files[i]);
             output = String.format("src/main/resources/output/prob-%03d.sol", i + 1);
             try (FileWriter writer = new FileWriter(output, false)) {
@@ -56,9 +56,9 @@ public class MainAlg {
             }
             path = new AStar(map).getPath(robot.getX(), robot.getY(), current.getX(), current.getY());
             for (Point<Integer, Integer> p : path) {
-
+                if (map.value(current.getX(), current.getY()) >= 10)
+                    break;
                 robot.moveTo(p, path.size() <= 2);
-
                 map.paint(new Point<>(robot.getX(), robot.getY()));
                 map.paint(robot.getManipulators());
             }
@@ -111,7 +111,7 @@ public class MainAlg {
         }
         if (map.value(x, y - 1) >= 0) {
             if (containPoint(x, y - 1))
-                ans.add(new Point<>(x, y - 1, distant(x, y - 1, start), point.getG() + 1 ));
+                ans.add(new Point<>(x, y - 1, distant(x, y - 1, start), point.getG() + 1));
         }
         return ans;
     }
@@ -126,7 +126,7 @@ public class MainAlg {
 
     public static int distant(int x, int y, Point<Integer, Integer> point) {
         return (int) Math.pow(x - point.getX(), 2)
-                        + (int) Math.pow(y - point.getY(), 2);
+                + (int) Math.pow(y - point.getY(), 2);
     }
 
 }
