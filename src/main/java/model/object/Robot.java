@@ -38,15 +38,18 @@ public class Robot {
         }
     }
 
-    public Robot(Parser parser, Map map) {
+    public Robot(Point<Integer, Integer> startPosition, Map map) {
         this.map = map;
-        Point<Integer, Integer> point = parser.parseStartPositionRobot();
-        this.X = point.getX();
-        this.Y = point.getY();
+        this.X = startPosition.getX();
+        this.Y = startPosition.getY();
         manipulators = new ArrayList<>(3);
         manipulators.add(0, new Manipulator(X + 1, Y - 1));
         manipulators.add(1, new Manipulator(X + 1, Y));
         manipulators.add(2, new Manipulator(X + 1, Y + 1));
+    }
+
+    public void useClone(){
+        answer.append('C');
     }
 
     public List<Point<Integer, Integer>> getManipulators() {

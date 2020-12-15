@@ -10,12 +10,15 @@ import java.util.List;
 public class Map {
     @Getter
     private int X, Y; // map size
+    @Getter
+    private Point<Integer, Integer> xPoint;
+    List<Point<Integer, Integer>> clone = new ArrayList<>();
     private ArrayList<ArrayList<Integer>> map;
+
     public Map(Parser parser) {
 
         createMap(parser.parseSizeMap());
         createObstacles(parser.parseWallPosition());
-//            createBoosters(parser.parseBoosters());
 
     }
 
@@ -76,15 +79,18 @@ public class Map {
             return map.get(y).get(x);
     }
 
-    public void createBoosters(List<Point<Character, Point<Integer, Integer>>> coordinates) {
-        for (int i = 0; i < coordinates.size(); i++) {
-            Point<Character, Point<Integer, Integer>> booster = coordinates.get(i);
-            int X = booster.getY().getX();
-            int Y = booster.getY().getY();
-            int index = 10;
-            //надо кучу ifов todo для индекса
-            map.get(Y).set(X, index);
+    public void hasACloneBoost(List<Point<Character, Point<Integer, Integer>>> coordinates){
+        for(Point<Character, Point<Integer, Integer>> p : coordinates ) {
+            if(p.getX() == 'C') clone.add(p.getY()); //HINT: we use point class as a pair class.
+            if(p.getX() == 'X') xPoint = p.getY();
         }
+    }
+
+    public Point<Integer, Integer> hasXPoint(List<Point<Character, Point<Integer, Integer>>> coordinates){
+        for(Point<Character, Point<Integer, Integer>> p : coordinates ){
+            if(p.getX() == 'X') return p.getY(); //HINT: we use point class as a pair class.
+        }
+        return new Point<>(-1, -1);
     }
 
     public void paint(List<Point<Integer, Integer>> listCoordinates) {
@@ -101,18 +107,5 @@ public class Map {
                 map.get(coordinate.getY()).set(coordinate.getX(), value);
             }
         }
-    }
-
-    @Override
-    public String toString() {
-        for (int i = map.size() - 1; i >= 0; i--) {
-            ArrayList<Integer> row = map.get(i);
-            for (int j : row) {
-                if (j == -1) System.out.print("ZZ");
-                else if (j == 0) System.out.print("__");
-            }
-            System.out.println();
-        }
-        return "";
     }
 }
