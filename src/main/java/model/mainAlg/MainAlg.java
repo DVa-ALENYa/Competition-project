@@ -16,7 +16,9 @@ public class MainAlg {
     //private static final String file = "src/main/resources/example-01.desc";
 
     private static Map map;
-    private static Robot robot;
+    private static Point<Integer, Integer> startPosition;
+    private static Robot robot1;
+    private static List<Robot> robots;
     private static Queue<Point<Integer, Integer>> open;
     private static ArrayList<ArrayList<Integer>> closed;
     private static Point<Integer, Integer> start;
@@ -24,9 +26,14 @@ public class MainAlg {
     static void init(File input) {
         Parser parser = new Parser(input);
         map = new Map(parser);
-        robot = new Robot(parser, map);
+        startPosition = parser.parseStartPositionRobot();
+        robot1 = new Robot(startPosition, map);
+        robots = new ArrayList<>();
     }
 
+    static void newRobot() {
+        robots.add(new Robot(robot1.getPoint(), map));
+    }
 
     public static void main(String[] args) {
         String output;
@@ -45,25 +52,60 @@ public class MainAlg {
 
     public static String algo() {
         List<Point<Integer, Integer>> path;
-        map.paint(robot.getPoint());
-        map.paint(robot.getManipulators());
+        map.paint(robot1.getPoint());
+        map.paint(robot1.getManipulators());
         Point<Integer, Integer> current;
-        start = new Point<>(robot.getX(), robot.getY());
-        do {
-            current = findEmpty(robot.getX(), robot.getY());
-            if (current.getX().equals(robot.getX()) && current.getY().equals(robot.getY())) {
-                break;
+        start = new Point<>(robot1.getX(), robot1.getY());
+        robots.add(robot1);
+
+        if (!map.getClone().isEmpty()) {
+            for (Point<Integer, Integer> c : map.getClone()) {
+                path = new AStar(map).getPath(robots.get(0).getX(), robots.get(0).getY(), c.getX(), c.getY());
+                for (Point<Integer, Integer> pa : path) {
+                    robots.get(0).moveTo(pa, false);
+                    map.paint(new Point<>(robots.get(0).getX(), robots.get(0).getY()));
+                    map.paint(robots.get(0).getManipulators());
+                }
             }
-            path = new AStar(map).getPath(robot.getX(), robot.getY(), current.getX(), current.getY());
-            for (Point<Integer, Integer> p : path) {
-                if (map.value(current.getX(), current.getY()) >= 10)
-                    break;
-                robot.moveTo(p, path.size() <= 2);
-                map.paint(new Point<>(robot.getX(), robot.getY()));
-                map.paint(robot.getManipulators());
+            path = new AStar(map).getPath(robots.get(0).getX(), robots.get(0).getY(), map.getXPoint().getX(), map.getXPoint().getY());
+            for (Point<Integer, Integer> pa : path) {
+                robots.get(0).moveTo(pa, false);
+                map.paint(new Point<>(robots.get(0).getX(), robots.get(0).getY()));
+                map.paint(robots.get(0).getManipulators());
+            }
+            for (int i = 0; i < map.getClone().size(); i++) {
+                robots.get(0).useClone();
+                newRobot();
+            }
+        }
+
+        do {
+            for (Robot robot : robots) {
+                current = findEmpty(robot1.getX(), robot1.getY());
+                if (current.getX().equals(robot1.getX()) && current.getY().equals(robot1.getY())) {
+                    return getAns();
+                }
+                path = new AStar(map).getPath(robot1.getX(), robot1.getY(), current.getX(), current.getY());
+                for (Point<Integer, Integer> p : path) {
+                    if (map.value(current.getX(), current.getY()) >= 10)
+                        break;
+                    robot1.moveTo(p, path.size() <= 2);
+                    map.paint(new Point<>(robot1.getX(), robot1.getY()));
+                    map.paint(robot1.getManipulators());
+                }
             }
         } while (true);
-        return robot.getAnswer().toString();
+    }
+
+    private static String getAns() {
+        StringBuilder ans = new StringBuilder();
+        boolean flag = false;
+        for (Robot robot : robots) {
+            if (flag) ans.append("#");
+            flag = true;
+            ans.append(robot.getAnswer().toString());
+        }
+        return ans.toString();
     }
 
     public static Point<Integer, Integer> findEmpty(int x, int y) {
