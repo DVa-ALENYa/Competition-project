@@ -3,9 +3,12 @@ package model.parser;
 import model.object.Point;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -16,8 +19,7 @@ public class Parser {
 
     private String[] splitArr;
 
-    public Parser(String fileName) {
-        List<List<Point<Integer, Integer>>> out;
+    public Parser(File fileName) {
         try (BufferedReader in = new BufferedReader(new FileReader(fileName))) {
             String line = in.readLine();
             this.splitArr = line.split("#");
@@ -55,7 +57,10 @@ public class Parser {
     }
 
     public List<List<Point<Integer, Integer>>> parseWallPosition() { // парсер поменял на лист листов без проверки на 4
+
         List<List<Point<Integer, Integer>>> out = new ArrayList<>();
+        if (splitArr.length < 3)
+            return out;
         for (String splitStr: splitArr[2].split(";")) {
             List<Point<Integer, Integer>> obstacle = new ArrayList<>();
             Matcher matcher = pattern.matcher(splitStr);

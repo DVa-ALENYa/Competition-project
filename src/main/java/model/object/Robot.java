@@ -14,6 +14,8 @@ public class Robot {
     @Setter
     private int X;
     @Getter
+    private int time = 0;
+    @Getter
     @Setter
     private int Y;
     @Getter
@@ -59,82 +61,90 @@ public class Robot {
         return new Point<>(X, Y);
     }
 
-    public void moveW() {
+    public void moveW(boolean useTurn) {
         this.Y--;
         for (Manipulator manipulator : manipulators) {
             manipulator.moveW();
         }
-        switch (position) {
-            case A:
-                turnQ();
-                break;
-            case D:
-                turnE();
-                break;
-            case S:
-                turnE();
-                turnE();
-                break;
+        if (useTurn) {
+            switch (position) {
+                case A:
+                    turnQ();
+                    break;
+                case D:
+                    turnE();
+                    break;
+                case S:
+                    turnE();
+                    turnE();
+                    break;
+            }
         }
         answer.append('S');
     }
 
-    public void moveS() {
+    public void moveS(boolean useTurn) {
         this.Y++;
         for (Manipulator manipulator : manipulators) {
             manipulator.moveS();
         }
-        switch (position) {
-            case A:
-                turnE();
-                break;
-            case D:
-                turnQ();
-                break;
-            case W:
-                turnE();
-                turnE();
-                break;
+        if (useTurn) {
+            switch (position) {
+                case A:
+                    turnE();
+                    break;
+                case D:
+                    turnQ();
+                    break;
+                case W:
+                    turnE();
+                    turnE();
+                    break;
+            }
         }
         answer.append('W');
     }
 
-    public void moveA() {
+    public void moveA(boolean useTurn) {
         this.X--;
         for (Manipulator manipulator : manipulators) {
             manipulator.moveA();
         }
-        switch (position) {
-            case D:
-                turnE();
-                turnE();
-                break;
-            case S:
-                turnQ();
-                break;
-            case W:
-                turnE();
-                break;
+        if (useTurn) {
+            switch (position) {
+                case D:
+                    turnE();
+                    turnE();
+                    break;
+                case S:
+                    turnQ();
+                    break;
+                case W:
+                    turnE();
+                    break;
+            }
         }
         answer.append('A');
     }
 
-    public void moveD() {
+    public void moveD(boolean useTurn) {
         this.X++;
         for (Manipulator manipulator : manipulators) {
             manipulator.moveD();
         }
-        switch (position) {
-            case A:
-                turnE();
-                turnE();
-                break;
-            case S:
-                turnE();
-                break;
-            case W:
-                turnQ();
-                break;
+        if (useTurn) {
+            switch (position) {
+                case A:
+                    turnE();
+                    turnE();
+                    break;
+                case S:
+                    turnE();
+                    break;
+                case W:
+                    turnQ();
+                    break;
+            }
         }
         answer.append('D');
     }
@@ -155,20 +165,21 @@ public class Robot {
         answer.append('E');
     }
 
-    public void moveTo(Point<Integer, Integer> point) {
+    public void moveTo(Point<Integer, Integer> point, boolean useTurn) {
         if(map.value(point.getX(), point.getY()) < 0) throw new IllegalStateException();
+        time++;
         int helpX = point.getX() - X;
         int helpY = point.getY() - Y;
         if (helpX == 0) {
             if (helpY == 1) {
-                moveS();
+                moveS(useTurn);
             } else {
-                moveW();
+                moveW(useTurn);
             }
         } else if (helpX == 1) {
-            moveD();
+            moveD(useTurn);
         } else {
-            moveA();
+            moveA(useTurn);
         }
     }
 
